@@ -7,7 +7,7 @@ const Categories = () => {
     const categories = use(categoryPromise);
     return (
         <div>
-            <h2 className='font-bold'>All Categories</h2>
+            <h2 className='font-bold text-lg'>All Categories</h2>
             <div className='grid grid-cols-1 mt-5 gap-3'>
                 {
                     categories.map(category =>
