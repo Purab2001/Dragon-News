@@ -58,7 +58,7 @@ const NewsCard = ({news}) => {
                 </div>
 
                 {/* Card Footer */}
-                <div className="flex justify-between items-center mt-5 pt-4 border-t">
+                <div className="flex justify-between items-center mt-5 pt-4 border-t border-base-300">
                     <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
                             <span key={star} className="text-warning">
