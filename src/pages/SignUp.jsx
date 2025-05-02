@@ -1,13 +1,26 @@
-import React, { use } from 'react';
-import { Link } from 'react-router';
+import React, { use, useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { AuthContext } from '../provider/AuthProvider';
 
 const SignUp = () => {
-    const {createUser, setUser} = use(AuthContext);
+    const { createUser, setUser, updateUserProfile } = use(AuthContext);
+    const [nameError, setNameError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const navigate = useNavigate();
+
     const handleSignUp = (e) => {
         e.preventDefault();
+        // Reset any previous errors
+        setNameError('');
+        setEmailError('');
+
         const form = e.target;
         const name = form.name.value;
+        if (name.length < 4) {
+            setNameError('Name must be at least 4 characters long');
+            return;
+        }
+
         const email = form.email.value;
         const password = form.password.value;
         const photoUrl = form.photoUrl.value;
@@ -16,14 +29,28 @@ const SignUp = () => {
         createUser(email, password)
             .then(result => {
                 const user = result.user;
-                setUser(user);
-                
+                updateUserProfile({ displayName: name, photoURL: photoUrl })
+                    .then(() => {
+                        setUser({ ...user, displayName: name, photoURL: photoUrl });
+                        navigate('/');
+                    })
+                    .catch(error => {
+                        console.error('Error updating profile:', error);
+                        setUser(user);
+                    });
             })
             .catch(error => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.error('Error Code:', errorCode);
                 console.error('Error Message:', errorMessage);
+
+                // Handle email already in use error
+                if (errorCode === 'auth/email-already-in-use') {
+                    setEmailError('This email is already registered. Try logging in instead.');
+                } else {
+                    setEmailError(errorMessage);
+                }
             });
     }
 
@@ -43,6 +70,7 @@ const SignUp = () => {
                         className="w-full px-4 py-3 rounded bg-gray-100 border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
                         required
                     />
+                    {nameError && <p className="text-red-500 text-sm mt-1">{nameError}</p>}
                 </div>
 
                 <div className="mb-4">
@@ -64,6 +92,7 @@ const SignUp = () => {
                         className="w-full px-4 py-3 rounded bg-gray-100 border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
                         required
                     />
+                    {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
                 </div>
 
                 <div className="mb-4">

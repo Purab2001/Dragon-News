@@ -1,9 +1,12 @@
 import React, { use } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { AuthContext } from '../provider/AuthProvider';
 
 const Login = () => {
+    const [error, setError] = React.useState('');
     const { logIn } = use(AuthContext);
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -16,12 +19,12 @@ const Login = () => {
             .then(result => {
                 const user = result.user;
                 console.log(user);
+                navigate(`${location.state ? location.state : '/'}`);
             })
             .catch(error => {
                 const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error('Error Code:', errorCode);
-                console.error('Error Message:', errorMessage);
+                // const errorMessage = error.message;
+                setError(errorCode);
             });
     }
 
@@ -53,6 +56,14 @@ const Login = () => {
                             required
                         />
                     </div>
+
+                    {
+                        error && (
+                            <div className="mb-4 text-red-500 text-sm">
+                                {error === 'auth/wrong-password' ? 'Wrong password' : 'Invalid email or password'}
+                            </div>
+                        )
+                    }
 
                     <button
                         type="submit"

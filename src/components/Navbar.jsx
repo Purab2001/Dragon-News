@@ -34,7 +34,7 @@ const Navbar = () => {
 
             <div className="navbar-end">
                 <div className='login-btn flex items-center gap-2'>
-                    <img src={userIcon} alt="user" className="w-10 h-10" />
+                    <img src={`${user ? user.photoURL : userIcon}`} alt="user" className="w-10 h-10 rounded-full" />
                     {
                         user ?
                             (<button onClick={handleLogout} className='btn btn-primary shadow-none px-10'>Logout</button>)
