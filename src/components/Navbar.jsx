@@ -1,8 +1,8 @@
 import React, { use } from 'react';
 import { NavLink } from 'react-router';
-import userIcon from '../assets/user.png';
 import { Link } from "react-router";
 import { AuthContext } from '../provider/AuthProvider';
+import { FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
 
@@ -34,7 +34,11 @@ const Navbar = () => {
 
             <div className="navbar-end">
                 <div className='login-btn flex items-center gap-2'>
-                    <img src={`${user ? user.photoURL : userIcon}`} alt="user" className="w-10 h-10 rounded-full" />
+                    {user && user.photoURL ? (
+                        <img src={user.photoURL} alt="user" className="w-10 h-10 rounded-full" />
+                    ) : (
+                        <FaUserCircle size={40} />
+                    )}
                     {
                         user ?
                             (<button onClick={handleLogout} className='btn btn-primary shadow-none px-10'>Logout</button>)
