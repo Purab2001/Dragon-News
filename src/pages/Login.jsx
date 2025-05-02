@@ -4,7 +4,9 @@ import { AuthContext } from '../provider/AuthProvider';
 
 const Login = () => {
     const [error, setError] = React.useState('');
-    const { logIn } = use(AuthContext);
+    const [resetEmail, setResetEmail] = React.useState('');
+    const [resetMessage, setResetMessage] = React.useState('');
+    const { logIn, resetPassword } = use(AuthContext);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -16,13 +18,29 @@ const Login = () => {
 
         logIn(email, password)
             .then(result => {
-                const user = result.user;
                 navigate(location.state?.from?.pathname || '/');
             })
             .catch(error => {
                 const errorCode = error.code;
                 // const errorMessage = error.message;
                 setError(errorCode);
+            });
+    }
+
+    const handleResetPassword = (e) => {
+        e.preventDefault();
+        if (!resetEmail) {
+            setResetMessage('Please enter your email address');
+            return;
+        }
+
+        resetPassword(resetEmail)
+            .then(() => {
+                setResetMessage('Password reset email sent! Please check your inbox.');
+                setResetEmail('');
+            })
+            .catch(error => {
+                setResetMessage('Error: ' + error.message);
             });
     }
 
@@ -53,6 +71,14 @@ const Login = () => {
                         className="w-full px-4 py-3 rounded bg-gray-100 border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
                         required
                     />
+                    <div className="mt-3">
+                        <button
+                            onClick={() => document.getElementById('reset-modal').showModal()}
+                            className="text-primary hover:underline cursor-pointer"
+                        >
+                            Forgot Password?
+                        </button>
+                    </div>
                 </div>
 
                 {
@@ -62,6 +88,7 @@ const Login = () => {
                         </div>
                     )
                 }
+
 
                 <button
                     type="submit"
@@ -74,6 +101,46 @@ const Login = () => {
             <div className="text-center mt-4 text-gray-600">
                 Don't Have An Account? <Link to="/auth/register" className="text-red-500">Register</Link>
             </div>
+
+            {/* Reset Password Modal */}
+            <dialog id="reset-modal" className="modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg mb-4">Reset Password</h3>
+                    <form onSubmit={handleResetPassword}>
+                        <div className="mb-4">
+                            <label htmlFor="reset-email" className="text-primary font-medium block mb-2">Email address</label>
+                            <input
+                                type="email"
+                                id="reset-email"
+                                value={resetEmail}
+                                onChange={(e) => setResetEmail(e.target.value)}
+                                placeholder="Enter your email address"
+                                className="w-full px-4 py-3 rounded bg-gray-100 border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
+                                required
+                            />
+                        </div>
+                        {resetMessage && (
+                            <div className="mb-4 text-sm">
+                                {resetMessage}
+                            </div>
+                        )}
+                        <div className="modal-action">
+                            <button type="submit" className="btn btn-primary shadow-none">Send Reset Link</button>
+                            <button
+                                type="button"
+                                className="btn"
+                                onClick={() => {
+                                    document.getElementById('reset-modal').close();
+                                    setResetMessage('');
+                                    setResetEmail('');
+                                }}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
         </div>
     );
 };
