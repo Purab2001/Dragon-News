@@ -38,7 +38,7 @@ const CategoryNews = () => {
                 <div className="text-center mt-6">
                     <button
                         onClick={() => setShowAll(true)}
-                        className="btn btn-secondary"
+                        className="btn btn-secondary shadow-none cursor-pointer"
                     >
                         View More
                     </button>

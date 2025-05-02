@@ -1,5 +1,5 @@
 import React, { use, useState } from 'react';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 import { Link } from "react-router";
 import { AuthContext } from '../provider/AuthProvider';
 import { FaUserCircle } from "react-icons/fa";
@@ -8,6 +8,7 @@ import { HiMenuAlt1 } from "react-icons/hi";
 const Navbar = () => {
     const { user, logOut } = use(AuthContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const location = useLocation();
 
     const handleLogout = () => {
         logOut()
@@ -19,20 +20,22 @@ const Navbar = () => {
             });
     }
 
+    const isHomeActive = location.pathname === '/' || location.pathname === '/category/0';
+
     return (
         <div className="navbar">
             <div className="navbar-start">
                 <div className="lg:hidden">
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="btn btn-ghost">
+                    <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
                         <HiMenuAlt1 size={24} />
                     </button>
                 </div>
                 <div className="hidden lg:block">{user && user.email}</div>
             </div>
 
-            <div className={`navbar-center ${isMenuOpen ? 'block' : 'hidden'} lg:block absolute lg:relative top-16 lg:top-0 left-0 right-0 bg-white lg:bg-transparent p-4 lg:p-0 shadow-lg lg:shadow-none`}>
+            <div className={`navbar-center ${isMenuOpen ? 'block' : 'hidden'} lg:block absolute lg:relative top-80 lg:top-0 left-0 right-0 bg-white lg:bg-transparent p-4 lg:p-0 shadow-lg lg:shadow-none`}>
                 <ul className="menu menu-vertical lg:menu-horizontal px-1 text-accent">
-                    <li><NavLink to='/'>Home</NavLink></li>
+                    <li><NavLink to='/' className={({ isActive }) => isActive || isHomeActive ? 'active' : ''}>Home</NavLink></li>
                     <li><NavLink to='/about'>About</NavLink></li>
                     <li><NavLink to='/career'>Career</NavLink></li>
                 </ul>
